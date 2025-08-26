@@ -1,0 +1,5 @@
+[workspace]
+members = ["orbit"]
+resolver = "3"
+
+[workspace.dependencies]
