@@ -1,5 +1,8 @@
 [workspace]
-members = ["orbit"]
+members = ["crates/orbit-shell", "orbit"]
 resolver = "3"
 
 [workspace.dependencies]
+winit = "0.30.12"
+
+orbit-shell = { path = "crates/orbit-shell" }

@@ -1,3 +1,6 @@
+use orbit_shell::shell::Shell;
+
 fn main() {
-    println!("Hello, world!");
+    let shell = Shell::new();
+    shell.run().unwrap();
 }
