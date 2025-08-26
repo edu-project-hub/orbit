@@ -1,6 +1,5 @@
-use orbit_shell::shell::Shell;
+use orbit_shell::shell::runner;
 
 fn main() {
-    let shell = Shell::new().unwrap();
-    shell.run().unwrap();
+    runner().unwrap();
 }

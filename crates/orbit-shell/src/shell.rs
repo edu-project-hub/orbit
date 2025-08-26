@@ -1,51 +1,35 @@
-use std::{collections::HashMap, sync::Arc};
+use std::{sync::Arc, thread::JoinHandle};
 
 use winit::{
     application::ApplicationHandler,
     error::EventLoopError,
     event::WindowEvent,
-    event_loop::{ActiveEventLoop, EventLoop, EventLoopProxy},
-    window::{Window, WindowId},
+    event_loop::{ActiveEventLoop, EventLoop, EventLoopClosed, EventLoopProxy},
+    window::WindowId,
 };
 
 use crate::event::Event;
 
 #[derive(Debug)]
-pub enum ShellError {
-    EvLoop(EventLoopError),
+pub enum ShellError<T> {
+    EventLoopError(EventLoopError),
+    EventLoopClosed(EventLoopClosed<T>),
 }
 
-pub struct Shell {
-    windows: HashMap<WindowId, Arc<Window>>,
-    evl: EventLoop<Event>,
-    proxy: EventLoopProxy<Event>,
+pub struct Shell<T>
+where
+    T: 'static,
+{
+    proxy: EventLoopProxy<T>,§  
 }
 
-impl Shell {
-    pub fn new() -> Result<Self, ShellError> {
-        let evl = EventLoop::with_user_event()
-            .build()
-            .map_err(ShellError::EvLoop)?;
-        let proxy = evl.create_proxy();
-
-        Ok(Self {
-            windows: HashMap::new(),
-            evl,
-            proxy,
-        })
+impl<T> ApplicationHandler<T> for Shell<T>
+where
+    T: 'static,
+{
+    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+        todo!()
     }
-
-    pub fn run(mut self) -> Result<(), ShellError> {
-        /*  let evl = EventLoop::new().map_err(ShellError::EvLoop)?;
-        evl.run_app(&mut self).map_err(ShellError::EvLoop)?;
-        Ok(()) */
-
-        Ok(())
-    }
-}
-
-impl ApplicationHandler<Event> for Shell {
-    fn resumed(&mut self, _: &ActiveEventLoop) {}
 
     fn window_event(
         &mut self,
@@ -53,14 +37,20 @@ impl ApplicationHandler<Event> for Shell {
         window_id: WindowId,
         event: WindowEvent,
     ) {
-        match event {
-            WindowEvent::CloseRequested => {
-                self.windows.remove(&window_id);
-                if self.windows.is_empty() {
-                    event_loop.exit();
-                }
-            }
-            _ => {}
-        }
+        todo!()
     }
+}
+
+pub fn runner() -> Result<(), ShellError<Event>> {
+    let evl: EventLoop<Event> = EventLoop::with_user_event()
+        .build()
+        .map_err(ShellError::EventLoopError)?;
+
+    let proxy = evl.create_proxy();
+    let mut shell = Shell { proxy };
+
+    evl.run_app(&mut shell)
+        .map_err(ShellError::EventLoopError)?;
+
+    Ok(())
 }
