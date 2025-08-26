@@ -41,6 +41,12 @@ impl ApplicationHandler for Shell {
         event: WindowEvent,
     ) {
         match event {
+            WindowEvent::CloseRequested => {
+                self.windows.remove(&window_id);
+                if self.windows.is_empty() {
+                    event_loop.exit();
+                }
+            }
             _ => {}
         }
     }
