@@ -1,4 +1,6 @@
 #[derive(Debug)]
-pub enum Event {
-
+pub enum AppEvent {
+  
 }
+
+ 
