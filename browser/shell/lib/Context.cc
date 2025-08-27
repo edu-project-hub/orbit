@@ -1,10 +1,11 @@
 #include "shell/Context.h"
 
+#include <GLFW/glfw3.h>
+
 #include <atomic>
 #include <cstddef>
 
 #include "shell/Panic.h"
-#include <GLFW/glfw3.h>
 
 namespace orbit::shell {
 static std::atomic<std::size_t> GLFW_REF_COUNT = 0;
@@ -25,8 +26,10 @@ Glfw::~Glfw() {
 
 Glfw::Glfw(const Glfw&) : Glfw() {}
 Glfw& Glfw::operator=(const Glfw& other) {
-  if (this == &other) return *this;
-  GLFW_REF_COUNT.fetch_add(1, std::memory_order_acq_rel);
+  if (this != &other) {
+    this->~Glfw();
+    new (this) Glfw(other);
+  }
   return *this;
 }
 
